@@ -100,7 +100,7 @@ public final class Constants
   {
 
 
-    public static final double kElevatorKp = 80;
+    public static final double kElevatorKp = 80; //Good so far
     public static final double kElevatorKi = 62;
     public static final double kElevatorKd = .3;
 
