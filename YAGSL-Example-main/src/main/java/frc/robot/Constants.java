@@ -136,7 +136,7 @@ public final class Constants
 
 
     public static final double kElevatorKp = 80; //Good so far
-    public static final double kElevatorKi = 62;
+    public static final double kElevatorKi = 95;
     public static final double kElevatorKd = .3;
 
     public static final double kElevatorkS = 0.01964; // volts (V)

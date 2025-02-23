@@ -120,7 +120,7 @@ public class RobotContainer
     controllerXbox.x().onTrue(elevator.setGoal(.5)); //Position 1
     controllerXbox.y().onTrue(elevator.setGoal(1));  //Position 2
     controllerXbox.b().onTrue(elevator.setGoal(2.2)); //Position 3
-    controllerXbox.a().onTrue(elevator.setGoal(.25)); //Pre-Load Position
+    controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
     controllerXbox.leftBumper().onTrue(elevator.setGoal(0)); //Load
 
     controllerXbox.povDown().onTrue(elevator.increaseGoal(-.1));
