@@ -9,6 +9,11 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.RobotMath.Arm;
 import swervelib.math.Matter;
 
@@ -61,6 +66,36 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
+  }
+
+  public static final Mechanism2d         sideRobotView = new Mechanism2d(ArmConstants.kArmLength * 2,
+                                                                          ElevatorConstants.kMaxElevatorHeight.in(
+                                                                              Meters) +
+                                                                          ArmConstants.kArmLength);
+
+  public static final MechanismRoot2d     kElevatorCarriage;
+  public static final MechanismLigament2d kArmMech;
+  public static final MechanismLigament2d kElevatorTower;
+
+  static
+  {
+    kElevatorCarriage = Constants.sideRobotView.getRoot("ElevatorCarriage",
+                                                        ArmConstants.kArmLength,
+                                                        ElevatorConstants.kStartingHeightSim.in(
+                                                    Meters));
+    kArmMech = kElevatorCarriage.append(
+        new MechanismLigament2d(
+            "Arm",
+            ArmConstants.kArmLength,
+            ArmConstants.kArmStartingAngle.in(Degrees),
+            6,
+            new Color8Bit(Color.kYellow)));
+    kElevatorTower = kElevatorCarriage.append(new MechanismLigament2d(
+        "Elevator",
+        ElevatorConstants.kStartingHeightSim.in(Meters),
+        -90,
+        6,
+        new Color8Bit(Color.kRed)));
   }
 
   public static class ArmConstants
