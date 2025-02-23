@@ -4,9 +4,23 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import frc.robot.RobotMath.Arm;
 import swervelib.math.Matter;
+
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Second;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
@@ -47,5 +61,67 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
+  }
+
+  public static class ArmConstants
+  {
+
+    // The P gain for the PID controller that drives this arm.
+    public static final double kArmKp                     = 2.0691;
+    public static final double kArmKi                     = 0;
+    public static final double kArmKd                     = 0.0;
+    public static final Angle  kArmAllowedClosedLoopError = Arm.convertAngleToSensorUnits(Degrees.of(0.01));
+
+    public static final double  kArmReduction                   = 200;
+    public static final double  kArmMass                        = 8.0; // Kilograms
+    public static final double  kArmLength                      = Inches.of(72).in(Meters);
+    public static final Angle   kArmStartingAngle               = Degrees.of(0);
+    public static final Angle   kMinAngle                       = Degrees.of(-75);
+    public static final Angle   kMaxAngle                       = Degrees.of(255);
+    public static final double  kArmRampRate                    = 0.5;
+    public static final Angle   kArmOffsetToHorizantalZero      = Rotations.of(0);
+    public static final boolean kArmInverted                    = false;
+    public static final double  kArmMaxVelocityRPM              = Arm.convertAngleToSensorUnits(Degrees.of(90)).per(
+        Second).in(RPM);
+    public static final double  kArmMaxAccelerationRPMperSecond = Arm.convertAngleToSensorUnits(Degrees.of(180)).per(
+                                                                         Second).per(Second)
+                                                                     .in(RPM.per(Second));
+    public static final int     kArmStallCurrentLimitAmps       = 40;
+
+    public static final double kArmkS = 0; // volts (V)
+    public static final double kArmkG = 0; // volts (V)
+    public static final double kArmKv = 0; // volts per velocity (V/RPM)
+    public static final double kArmKa = 0; // volts per acceleration (V/(RPM/s))
+
+
+  }
+
+  public static class ElevatorConstants
+  {
+
+
+    public static final double kElevatorKp = 80;
+    public static final double kElevatorKi = 62;
+    public static final double kElevatorKd = .3;
+
+    public static final double kElevatorkS = 0.01964; // volts (V)
+    public static final double kElevatorkV = 3.894; // volt per velocity (V/(m/s))
+    public static final double kElevatorkA = 0.173; // volt per acceleration (V/(m/s²))
+    public static final double kElevatorkG = 0.91274; // volts (V)
+
+    public static final double kElevatorGearing    = 5;
+    public static final double kElevatorDrumRadius = Units.inchesToMeters(1);
+    public static final double kCarriageMass       = 4.0; // kg
+
+    // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
+    public static final Distance kStartingHeightSim = Meters.of(0);
+    public static final Distance kMinElevatorHeight = Meters.of(0.0);
+    public static final Distance kMaxElevatorHeight = Meters.of(1);
+
+
+    public static double kElevatorRampRate = 0.6;
+    public static int    kElevatorCurrentLimit = 40;
+    public static double kMaxVelocity = Meters.of(4).per(Second).in(MetersPerSecond);
+    public static double kMaxAcceleration = Meters.of(3.5).per(Second).per(Second).in(MetersPerSecondPerSecond);
   }
 }
