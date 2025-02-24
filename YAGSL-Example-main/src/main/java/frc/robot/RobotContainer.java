@@ -15,9 +15,11 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
@@ -30,7 +32,8 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer
 {
-  private final ElevatorSubsystem     elevator           = new ElevatorSubsystem();
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final ArmSubsystem arm = new ArmSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   final         CommandXboxController controllerXbox = new CommandXboxController(1);
@@ -117,7 +120,7 @@ public class RobotContainer
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
 
-    controllerXbox.x().onTrue(elevator.setGoal(.5)); //Position 1
+    controllerXbox.x().onTrue(setArmPosition1()); //Position 1
     controllerXbox.y().onTrue(elevator.setGoal(1));  //Position 2
     controllerXbox.b().onTrue(elevator.setGoal(2.2)); //Position 3
     controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
@@ -198,4 +201,13 @@ public class RobotContainer
   {
     drivebase.setMotorBrake(brake);
   }
+
+
+  public Command setArmPosition1() {
+    elevator.setGoal(.5);
+    new WaitCommand(1);
+    return arm.setGoal(90);
+  }
+
+
 }

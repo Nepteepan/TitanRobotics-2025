@@ -1,4 +1,4 @@
-package frc.robot.Arm.ArmSubsystem;
+package frc.robot.subsystems.Arm;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Minute;

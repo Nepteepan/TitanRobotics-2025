@@ -109,10 +109,10 @@ public final class Constants
 
     public static final double  kArmReduction                   = 200;
     public static final double  kArmMass                        = 8.0; // Kilograms
-    public static final double  kArmLength                      = Inches.of(72).in(Meters);
+    public static final double  kArmLength                      = Inches.of(19).in(Meters);
     public static final Angle   kArmStartingAngle               = Degrees.of(0);
-    public static final Angle   kMinAngle                       = Degrees.of(-75);
-    public static final Angle   kMaxAngle                       = Degrees.of(255);
+    public static final Angle   kMinAngle                       = Degrees.of(0);
+    public static final Angle   kMaxAngle                       = Degrees.of(180);
     public static final double  kArmRampRate                    = 0.5;
     public static final Angle   kArmOffsetToHorizantalZero      = Rotations.of(0);
     public static final boolean kArmInverted                    = false;
