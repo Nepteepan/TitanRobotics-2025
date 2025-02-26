@@ -13,14 +13,17 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.RobotMath.Elevator;
 import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
+import frc.robot.subsystems.scoringRoutines;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -32,22 +35,26 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer
 {
-  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-  private final ArmSubsystem arm = new ArmSubsystem();
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   final         CommandXboxController controllerXbox = new CommandXboxController(1);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                                "swerve/neo"));
+                                                                                "swerve"));
+private ElevatorSubsystem elevator = new ElevatorSubsystem();
+private ArmSubsystem arm = new ArmSubsystem();
 
+private scoringRoutines scoringroutines = new scoringRoutines(elevator, arm, drivebase);
+  
+  
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> driverXbox.getLeftY() * -1,
                                                                 () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
+                                                            .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -111,29 +118,40 @@ public class RobotContainer
    */
   private void configureBindings()
   {
+
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity  = drivebase.driveFieldOriented(driveRobotOriented);
-    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(
+        driveDirectAngle);
     Command driveFieldOrientedDirectAngleKeyboard      = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
     Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
-    Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
+    Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
+        driveDirectAngleKeyboard);
 
-    //controllerXbox.x().onTrue(arm.setGoal(-28));
+   
+
+    controllerXbox.x().onTrue(arm.setGoal(-28));
     //new WaitCommand(1);
-    controllerXbox.x().onTrue(elevator.setGoal(0)); //Position 1
-    
-    controllerXbox.y().onTrue(elevator.setGoal(.75));  //Position 2
-    //controllerXbox.y().onTrue(arm.setGoal(-28));
+    //controllerXbox.x().onTrue(elevator.setGoal(0)); //Position 1
+    controllerXbox.x().onTrue(scoringroutines.movelevel2());
 
-    controllerXbox.b().onTrue(elevator.setGoal(2.2)); //Position 3
+
+    //controllerXbox.y().onTrue(elevator.setGoal(.75));  //Position 2
+    //controllerXbox.y().onTrue(arm.setGoal(-28));
+    controllerXbox.y().onTrue(scoringroutines.movelevel3());
+
+
+    //controllerXbox.b().onTrue(elevator.setGoal(2.2)); //Position 3
    // controllerXbox.b().onTrue(arm.setGoal(-28));
+   controllerXbox.b().onTrue(scoringroutines.movelevel4());
     //controllerXbox.rightBumper().onTrue(arm.setGoal(0));
 
-    controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
-   // controllerXbox.a().onTrue(arm.setGoal(0)); :)
+    //controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
+   // controllerXbox.a().onTrue(arm.setGoal(0)); 
+   controllerXbox.a().onTrue(scoringroutines.moveloadposition());
 
-    controllerXbox.leftBumper().onTrue(elevator.setGoal(0)); //Load
+    /*controllerXbox.leftBumper().onTrue(elevator.setGoal(0)); //Load
     controllerXbox.rightTrigger().onTrue(arm.setGoal(-28));
     controllerXbox.rightBumper().onTrue(arm.setGoal(0));
     controllerXbox.povDown().onTrue(elevator.increaseGoal(-.1));
@@ -167,9 +185,9 @@ public class RobotContainer
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                                     () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));*/
+                                                     () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
-    }
+    }*/
     if (DriverStation.isTest())
     {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
@@ -211,13 +229,4 @@ public class RobotContainer
   {
     drivebase.setMotorBrake(brake);
   }
-
-
-
-    public Command setArmPositionLoad() {
-    elevator.setGoal(.35);
-    //new WaitCommand(1);
-    return arm.setGoal(0);
-  }
-
 }
