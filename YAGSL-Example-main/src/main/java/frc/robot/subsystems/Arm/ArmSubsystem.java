@@ -57,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase
   public final Trigger atMin = new Trigger(() -> getAngle().lte(ArmConstants.kMinAngle.plus(Degrees.of(5))));
   public final Trigger atMax = new Trigger(() -> getAngle().gte(ArmConstants.kMaxAngle.minus(Degrees.of(5))));
 
-  private final SparkMax                  m_motor      = new SparkMax(4, MotorType.kBrushless);
+  private final SparkMax                  m_motor      = new SparkMax(53, MotorType.kBrushless);
   private final SparkClosedLoopController m_controller = m_motor.getClosedLoopController();
   private final RelativeEncoder           m_encoder    = m_motor.getEncoder();
   private final AbsoluteEncoder           m_absEncoder = m_motor.getAbsoluteEncoder();

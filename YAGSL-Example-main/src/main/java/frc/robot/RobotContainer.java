@@ -119,13 +119,23 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
+    //controllerXbox.x().onTrue(arm.setGoal(-28));
+    //new WaitCommand(1);
+    controllerXbox.x().onTrue(elevator.setGoal(0)); //Position 1
+    
+    controllerXbox.y().onTrue(elevator.setGoal(.75));  //Position 2
+    //controllerXbox.y().onTrue(arm.setGoal(-28));
 
-    controllerXbox.x().onTrue(setArmPosition1()); //Position 1
-    controllerXbox.y().onTrue(elevator.setGoal(1));  //Position 2
     controllerXbox.b().onTrue(elevator.setGoal(2.2)); //Position 3
-    controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
-    controllerXbox.leftBumper().onTrue(elevator.setGoal(0)); //Load
+   // controllerXbox.b().onTrue(arm.setGoal(-28));
+    //controllerXbox.rightBumper().onTrue(arm.setGoal(0));
 
+    controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
+   // controllerXbox.a().onTrue(arm.setGoal(0));
+
+    controllerXbox.leftBumper().onTrue(elevator.setGoal(0)); //Load
+    controllerXbox.rightTrigger().onTrue(arm.setGoal(-28));
+    controllerXbox.rightBumper().onTrue(arm.setGoal(0));
     controllerXbox.povDown().onTrue(elevator.increaseGoal(-.1));
     controllerXbox.povUp().onTrue(elevator.increaseGoal(.1));
 
@@ -139,7 +149,7 @@ public class RobotContainer
 
     if (Robot.isSimulation())
     {
-      driveDirectAngleKeyboard.driveToPose(() -> new Pose2d(new Translation2d(9, 3),
+      /*driveDirectAngleKeyboard.driveToPose(() -> new Pose2d(new Translation2d(9, 3),
                                                             Rotation2d.fromDegrees(90)),
                                            new ProfiledPIDController(5,
                                                                      0,
@@ -157,7 +167,7 @@ public class RobotContainer
       driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       driverXbox.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
       driverXbox.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                                     () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+                                                     () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));*/
 
     }
     if (DriverStation.isTest())
@@ -203,11 +213,11 @@ public class RobotContainer
   }
 
 
-  public Command setArmPosition1() {
-    elevator.setGoal(.5);
-    new WaitCommand(1);
-    return arm.setGoal(90);
-  }
 
+    public Command setArmPositionLoad() {
+    elevator.setGoal(.35);
+    //new WaitCommand(1);
+    return arm.setGoal(0);
+  }
 
 }
