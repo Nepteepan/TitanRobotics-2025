@@ -129,9 +129,7 @@ private scoringRoutines scoringroutines = new scoringRoutines(elevator, arm, dri
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
 
-   
-
-    controllerXbox.x().onTrue(arm.setGoal(-28));
+  
     //new WaitCommand(1);
     //controllerXbox.x().onTrue(elevator.setGoal(0)); //Position 1
     controllerXbox.x().onTrue(scoringroutines.movelevel2());
@@ -150,7 +148,7 @@ private scoringRoutines scoringroutines = new scoringRoutines(elevator, arm, dri
     //controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
    // controllerXbox.a().onTrue(arm.setGoal(0)); 
    controllerXbox.a().onTrue(scoringroutines.moveloadposition());
-
+    controllerXbox.leftBumper().onTrue(scoringroutines.movehome());
     /*controllerXbox.leftBumper().onTrue(elevator.setGoal(0)); //Load
     controllerXbox.rightTrigger().onTrue(arm.setGoal(-28));
     controllerXbox.rightBumper().onTrue(arm.setGoal(0));
