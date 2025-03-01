@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,19 +20,18 @@ public class NeoPositionalPid extends SubsystemBase{
     String className = this.getClass().getSimpleName();
     public double CurrentRotationPosition;
     public double setpointGoal = 0;
-    public int MotorCanId = 52;
-
+    public int MotorCanId = 53;
     private SparkMax m_rotate1650 = new SparkMax(MotorCanId, MotorType.kBrushless);
 
     private final RelativeEncoder m_Rotate1650Encoder = m_rotate1650.getEncoder();
     private final SparkClosedLoopController  m_rotate1650PID = m_rotate1650.getClosedLoopController();
 
-    public double Proportional = 0.09;
+    public double Proportional = 0.13;
     public double Integral = 0;
-    public double Derivative = 0.001;
+    public double Derivative = 0.2;
 
     public double minposition = 0;
-    public double maxPosition = 22;
+    public double maxPosition = 20;
     
     private SparkMaxConfig motorConfig = new SparkMaxConfig();
 
@@ -41,12 +41,12 @@ public class NeoPositionalPid extends SubsystemBase{
 
         
         //not breaking the robot with more numbers!
-        motorConfig.inverted(false);
+        motorConfig.inverted(true);
         motorConfig.softLimit.forwardSoftLimitEnabled(true);
         motorConfig.softLimit.forwardSoftLimit(maxPosition);
         motorConfig.softLimit.reverseSoftLimitEnabled(true);
         motorConfig.softLimit.reverseSoftLimit(minposition);
-
+        motorConfig.idleMode(IdleMode.kBrake);
 
         //Current Limits
         motorConfig.smartCurrentLimit(20);

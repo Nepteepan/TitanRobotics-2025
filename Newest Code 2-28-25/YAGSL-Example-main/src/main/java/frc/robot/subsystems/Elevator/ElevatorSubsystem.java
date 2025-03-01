@@ -33,6 +33,7 @@ import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.RobotMath.Elevator;
+import frc.robot.commands.MoveElevator;
 
 public class ElevatorSubsystem extends SubsystemBase
 {
@@ -110,6 +112,7 @@ public class ElevatorSubsystem extends SubsystemBase
    */
   public ElevatorSubsystem()
   {
+    SmartDashboard.putNumber(className +" setPointGoal", 0);
     SparkMaxConfig config = new SparkMaxConfig();
     config
         .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit)
@@ -142,11 +145,18 @@ public class ElevatorSubsystem extends SubsystemBase
    */
   public void reachGoal(double goal)
   {
+    SmartDashboard.putNumber(className +" setPointGoal", goal);
     double voltsOut = MathUtil.clamp(
         m_controller.calculate(getHeightMeters(), goal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
                                               m_controller.getSetpoint().velocity), -7, 7);
     m_motor.setVoltage(voltsOut);
+  }
+  public double voltstoHoldPosition =.4;
+  public void HoldPosition()
+  {
+
+    m_motor.setVoltage(voltstoHoldPosition);
   }
 
   /**
@@ -228,7 +238,8 @@ public class ElevatorSubsystem extends SubsystemBase
    */
   public Command setGoal(double goal)
   {
-    return run(() -> reachGoal(goal));
+    return new MoveElevator(this, goal);
+    //return run(() -> reachGoal(goal));
   }
 
   public Command increaseGoal(double goal)
@@ -250,9 +261,14 @@ public class ElevatorSubsystem extends SubsystemBase
   public void updateTelemetry()
   {
   }
+  String className = this.getClass().getSimpleName();
 
   @Override
   public void periodic()
   {
+    SmartDashboard.putNumber(className +" appliedVoltage", m_motor.getAppliedOutput());
+  
+    SmartDashboard.putNumber(className +" 1650 Amperage", m_motor.getOutputCurrent());
+    SmartDashboard.putNumber(className +" HeightMeters", getHeightMeters());
   }
 }

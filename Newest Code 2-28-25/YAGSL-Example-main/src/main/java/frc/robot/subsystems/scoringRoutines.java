@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotMath.Arm;
 import frc.robot.RobotMath.Elevator;
+import frc.robot.commands.MoveElevator;
 import frc.robot.Arm.ArmSubsystem.ArmSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -19,12 +20,12 @@ public class scoringRoutines {
     private SwerveSubsystem swervesubsystem;
     private double Position2elevator = 0;
     private double Position3elevator = .75;
-    private double Position4elevator = 1.3;
+    private double Position4elevator = 2.2;
     private double elevatorloadposition = .35;
     private double elevatorhome = 0;
-    private double Position1arm = -30;
-    private double Position2arm = -28;
-    private double Position3arm = -28;
+    private double Position1arm = 19;
+    private double Position2arm = 15;
+    private double Position3arm = 15;
     private double armhome = 0;
 
 
@@ -44,7 +45,7 @@ public class scoringRoutines {
     }
     public Command scorelevel2() {
         return new SequentialCommandGroup(
-            arm.setGoal(-14),
+            arm.setGoal(10),
             new WaitCommand(2.0),
             elevator.setGoal(elevatorloadposition),
             new WaitCommand(2.0),
@@ -73,7 +74,7 @@ public class scoringRoutines {
     }
     //Sequence 3 Start
     public Command movelevel4() {
-        return Commands.sequence(elevator.setGoal(Position4elevator).withTimeout(.5),
+        return Commands.sequence(elevator.setGoal(Position4elevator),//.withTimeout(.5),
         arm.setGoal(Position3arm));
         
         
@@ -81,7 +82,9 @@ public class scoringRoutines {
     //Sequence 3 End
     //Sequence Load Start
     public Command moveloadposition() {
-        return Commands.sequence(elevator.setGoal(elevatorloadposition),//.withTimeout(.5),
+        return Commands.sequence(
+            new MoveElevator(elevator, elevatorloadposition),
+            arm.setGoal(armhome+2),new WaitCommand(1.0),
         arm.setGoal(armhome));
     }
      //Sequence Load End
