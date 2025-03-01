@@ -14,7 +14,7 @@ import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class scoringRoutines {
-    private ArmSubsystem arm;
+    private NeoPositionalPid arm;
     private ElevatorSubsystem elevator;
     private SwerveSubsystem swervesubsystem;
     private double Position2elevator = 0;
@@ -29,7 +29,7 @@ public class scoringRoutines {
 
 
 
-    public scoringRoutines(ElevatorSubsystem elevator, ArmSubsystem arm, SwerveSubsystem swervesubsystem){
+    public scoringRoutines(ElevatorSubsystem elevator, NeoPositionalPid arm, SwerveSubsystem swervesubsystem){
         this.elevator = elevator;
         this.arm = arm;
         this.swervesubsystem = swervesubsystem;

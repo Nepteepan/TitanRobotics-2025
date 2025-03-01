@@ -116,7 +116,7 @@ public void PushConfigToController()
     });
 }
 
-    public Command gotoposition(double position)
+    public Command setGoal(double position)
     {
         return new InstantCommand(()->{
             System.out.println("goin to " + position);

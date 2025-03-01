@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Arm.ArmSubsystem.ArmSubsystem;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.NeoPositionalPid;
 import frc.robot.subsystems.scoringRoutines;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -39,8 +40,9 @@ public class RobotContainer
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
-  private ArmSubsystem arm = new ArmSubsystem();
-  private scoringRoutines scoringroutines = new scoringRoutines(elevator, arm, drivebase);
+  //private ArmSubsystem arm = new ArmSubsystem();
+  private NeoPositionalPid SimpleArm = new NeoPositionalPid();
+  private scoringRoutines scoringroutines = new scoringRoutines(elevator, SimpleArm, drivebase);
 
 
   /**
