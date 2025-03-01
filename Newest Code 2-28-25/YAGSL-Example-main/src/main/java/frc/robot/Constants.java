@@ -102,7 +102,6 @@ public final class Constants
   {
 
     // The P gain for the PID controller that drives this arm.
-    
     public static final double kArmKp                     = 4.7;
     public static final double kArmKi                     = 1.1;
     public static final double kArmKd                     = 0.01;
@@ -117,9 +116,9 @@ public final class Constants
     public static final double  kArmRampRate                    = 0.5;
     public static final Angle   kArmOffsetToHorizantalZero      = Rotations.of(0);
     public static final boolean kArmInverted                    = false;
-    public static final double  kArmMaxVelocityRPM              = Arm.convertAngleToSensorUnits(Degrees.of(1)).per(
+    public static final double  kArmMaxVelocityRPM              = Arm.convertAngleToSensorUnits(Degrees.of(1.5)).per(
         Second).in(RPM);
-    public static final double  kArmMaxAccelerationRPMperSecond = Arm.convertAngleToSensorUnits(Degrees.of(1)).per(
+    public static final double  kArmMaxAccelerationRPMperSecond = Arm.convertAngleToSensorUnits(Degrees.of(1.5)).per(
                                                                          Second).per(Second)
                                                                      .in(RPM.per(Second));
     public static final int     kArmStallCurrentLimitAmps       = 40;

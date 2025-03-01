@@ -4,6 +4,9 @@ import javax.swing.text.Position;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotMath.Arm;
 import frc.robot.RobotMath.Elevator;
 import frc.robot.Arm.ArmSubsystem.ArmSubsystem;
@@ -40,9 +43,17 @@ public class scoringRoutines {
         
     }
     public Command scorelevel2() {
-        return Commands.sequence(arm.setGoal(-14).withTimeout(.5),
-        arm.setGoal(armhome).withTimeout(.25),
-        elevator.setGoal(elevatorloadposition));
+        return new SequentialCommandGroup(
+            arm.setGoal(-14),
+            new WaitCommand(2.0),
+            elevator.setGoal(elevatorloadposition),
+            new WaitCommand(2.0),
+            arm.setGoal(armhome)
+        );
+    //     return Commands.sequence(arm.setGoal(-14),
+    //     new WaitCommand(0.5)//.withTimeout(.5),
+    //     ,arm.setGoal(armhome).//withTimeout(.25),
+    //    ,elevator.setGoal(elevatorloadposition));
     }
     //Sequence 1 End
     //Sequence Home Start
@@ -70,7 +81,7 @@ public class scoringRoutines {
     //Sequence 3 End
     //Sequence Load Start
     public Command moveloadposition() {
-        return Commands.sequence(elevator.setGoal(elevatorloadposition).withTimeout(.5),
+        return Commands.sequence(elevator.setGoal(elevatorloadposition),//.withTimeout(.5),
         arm.setGoal(armhome));
     }
      //Sequence Load End
