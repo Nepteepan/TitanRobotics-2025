@@ -12,28 +12,35 @@ import frc.robot.RobotMath.Elevator;
 import frc.robot.commands.MoveElevator;
 import frc.robot.Arm.ArmSubsystem.ArmSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
+import frc.robot.subsystems.Lifter.LifterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class scoringRoutines {
+    private LifterSubsystem lifter;
     private NeoPositionalPid arm;
     private ElevatorSubsystem elevator;
     private SwerveSubsystem swervesubsystem;
     private double Position2elevator = 0;
     private double Position3elevator = .75;
-    private double Position4elevator = 2.2;
+    private double Position4elevator = 2.3;
     private double elevatorloadposition = .35;
     private double elevatorhome = 0;
     private double Position1arm = 19;
     private double Position2arm = 15;
     private double Position3arm = 15;
     private double armhome = 0;
+    private double lifterhome = 0;
+    private double lifterhalfway = 1.3;
+    private double lifterfull = 4;
 
 
 
-    public scoringRoutines(ElevatorSubsystem elevator, NeoPositionalPid arm, SwerveSubsystem swervesubsystem){
+    public scoringRoutines(ElevatorSubsystem elevator, NeoPositionalPid arm, SwerveSubsystem swervesubsystem, LifterSubsystem lifter){
         this.elevator = elevator;
         this.arm = arm;
         this.swervesubsystem = swervesubsystem;
+        this.lifter = lifter;
+
     }
 
     // Sequence 1 Start
@@ -84,7 +91,7 @@ public class scoringRoutines {
     public Command moveloadposition() {
         return Commands.sequence(
             new MoveElevator(elevator, elevatorloadposition),
-            arm.setGoal(armhome+2),new WaitCommand(1.0),
+            arm.setGoal(armhome+2),new WaitCommand(.5),
         arm.setGoal(armhome));
     }
      //Sequence Load End
@@ -92,5 +99,20 @@ public class scoringRoutines {
         return Commands.sequence(arm.setGoal(armhome).withTimeout(.5),
         //swervesubsystem.driveToDistanceCommand(-.25, .25),
         elevator.setGoal(elevatorloadposition));
+    }
+
+
+    public Command hangprep(){
+        return Commands.sequence(lifter.setGoal(lifterhalfway));
+
+    }
+
+    public Command hang(){
+        return Commands.sequence(lifter.setGoal(lifterfull));
+
+    }
+
+    public Command AutoDrive() {
+        return Commands.sequence(swervesubsystem.driveToDistanceCommand(1, 1));
     }
 }

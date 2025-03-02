@@ -5,23 +5,25 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Arm.ArmSubsystem.ArmSubsystem;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.NeoPositionalPid;
 import frc.robot.subsystems.scoringRoutines;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
+import frc.robot.subsystems.Lifter.LifterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -34,6 +36,7 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   private final ElevatorSubsystem     elevator           = new ElevatorSubsystem();
+  private final LifterSubsystem lifter = new LifterSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   final         CommandXboxController controllerXbox = new CommandXboxController(1);
@@ -42,15 +45,15 @@ public class RobotContainer
                                                                                 "swerve/neo"));
   //private ArmSubsystem arm = new ArmSubsystem();
   private NeoPositionalPid SimpleArm = new NeoPositionalPid();
-  private scoringRoutines scoringroutines = new scoringRoutines(elevator, SimpleArm, drivebase);
+  private scoringRoutines scoringroutines = new scoringRoutines(elevator, SimpleArm, drivebase, lifter);
 
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> driverXbox.getLeftY() * 1,
-                                                                () -> driverXbox.getLeftX() * 1)
+                                                                () -> driverXbox.getLeftY() * -1,
+                                                                () -> driverXbox.getLeftX() * -1)
                                                             .withControllerRotationAxis(driverXbox::getRightX)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
@@ -144,7 +147,7 @@ public class RobotContainer
    // controllerXbox.a().onTrue(arm.setGoal(0)); 
    controllerXbox.a().onTrue(scoringroutines.moveloadposition());
   controllerXbox.leftTrigger().onTrue(scoringroutines.scorelevel2());
-
+  
 
     if (DriverStation.isTest())
     {
@@ -160,29 +163,33 @@ public class RobotContainer
     {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driverXbox.rightBumper().onTrue(scoringroutines.hang());
+      driverXbox.leftBumper().onTrue(scoringroutines.hangprep());
       driverXbox.b().whileTrue(
           drivebase.driveToPose(
               new Pose2d(new Translation2d(-4, 4), Rotation2d.fromDegrees(0)))
-                              );
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
-      driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+                              ); 
+      //driverXbox.start().whileTrue(
+        //new ConditionalCommand(new InstantCommand(()->{drivebase.resetOdometry( new Pose2d(0,0,Rotation2d.fromDegrees(0)));})
+        //,new InstantCommand(()->{drivebase.resetOdometry( new Pose2d(0,0,Rotation2d.fromDegrees(180)));}),()->DriverStation.getAlliance().equals(Alliance.Blue)));
+      //driverXbox.back().onTrue();
+      //driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      //driverXbox.rightBumper().onTrue(Commands.none());
     }
 
-  }
+  } 
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
-  {
-    // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
+  public Command getAutonomousCommand(){
+      //return Commands.none();
+      return drivebase.getAutonomousCommand("Drive Out");
+    //ChassisSpeeds auto_drive = new ChassisSpeeds(2.0,0.0,0.0);
+  //drivebase.driveFieldOriented(auto_drive);
   }
-
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);

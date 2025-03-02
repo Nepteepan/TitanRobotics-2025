@@ -62,7 +62,7 @@ public final class Constants
   {
 
     // Joystick Deadband
-    public static final double DEADBAND        = 0.1;
+    public static final double DEADBAND        = 0.075;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
@@ -155,7 +155,35 @@ public final class Constants
 
     public static double kElevatorRampRate = 0.6;
     public static int    kElevatorCurrentLimit = 40;
-    public static double kMaxVelocity = Meters.of(4).per(Second).in(MetersPerSecond);
-    public static double kMaxAcceleration =  Meters.of(3.5).per(Second).per(Second).in(MetersPerSecondPerSecond);
+    public static double kMaxVelocity = Meters.of(4.5).per(Second).in(MetersPerSecond);
+    public static double kMaxAcceleration =  Meters.of(4).per(Second).per(Second).in(MetersPerSecondPerSecond);
+  }
+
+  public static class LifterConstants
+  {
+
+
+    public static final double kLifterKp = 12.5; //Good so far
+    public static final double kLifterKi = 0.005;
+    public static final double kLifterKd = 0.1;
+
+    public static final double kLifterkS = 0.01964; // volts (V)
+    public static final double kLifterkV = 3.894; // volt per velocity (V/(m/s))
+    public static final double kLifterkA = 0.173; // volt per acceleration (V/(m/s²))
+    public static final double kLifterkG = 0.09; // volts (V)
+
+    public static final double kLifterGearing    = 5;
+    public static final double kLifterDrumRadius = Units.inchesToMeters(1);
+
+    // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
+    public static final Distance kStartingHeightSim = Meters.of(0);
+    public static final Distance kMinLifterHeight = Meters.of(0.0);
+    public static final Distance kMaxLifterHeight = Meters.of(1);
+
+
+    public static double kLifterRampRate = 0.6;
+    public static int    kLifterCurrentLimit = 40;
+    public static double kMaxVelocity = .5;//Meters.of(4).per(Second).in(MetersPerSecond);
+    public static double kMaxAcceleration = .5; //Meters.of(3.5).per(Second).per(Second).in(MetersPerSecondPerSecond);
   }
 }
