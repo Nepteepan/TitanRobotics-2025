@@ -8,15 +8,10 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -107,6 +102,11 @@ public class RobotContainer
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+
+    //Register Commands for Path Planner
+    NamedCommands.registerCommand("Move Level 4", scoringroutines.movelevel4());
+    NamedCommands.registerCommand("Move Level Load Postion", scoringroutines.moveloadposition());
+    NamedCommands.registerCommand("Move Home Postion", scoringroutines.movehome());
   }
 
   /**
@@ -129,24 +129,13 @@ public class RobotContainer
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
     
-    //new WaitCommand(1);
-    //controllerXbox.x().onTrue(elevator.setGoal(0)); //Position 1
     controllerXbox.x().onTrue(scoringroutines.movelevel2());
-    
-
-    //controllerXbox.y().onTrue(elevator.setGoal(.75));  //Position 2
-    //controllerXbox.y().onTrue(arm.setGoal(-28));
     controllerXbox.y().onTrue(scoringroutines.movelevel3());
     controllerXbox.leftBumper().onTrue(scoringroutines.movehome());
     controllerXbox.rightTrigger().onTrue(scoringroutines.scorelevel4());
-    //controllerXbox.b().onTrue(elevator.setGoal(2.2)); //Position 3
-   // controllerXbox.b().onTrue(arm.setGoal(-28));
-   controllerXbox.b().onTrue(scoringroutines.movelevel4());
-    
-    //controllerXbox.a().onTrue(elevator.setGoal(.35)); //Pre-Load Position
-   // controllerXbox.a().onTrue(arm.setGoal(0)); 
-   controllerXbox.a().onTrue(scoringroutines.moveloadposition());
-  controllerXbox.leftTrigger().onTrue(scoringroutines.scorelevel2());
+    controllerXbox.b().onTrue(scoringroutines.movelevel4());
+    controllerXbox.a().onTrue(scoringroutines.moveloadposition());
+    controllerXbox.leftTrigger().onTrue(scoringroutines.scorelevel2());
   
 
     if (DriverStation.isTest())
