@@ -113,10 +113,12 @@ public class RobotContainer
     NamedCommands.registerCommand("Move Home Postion", scoringroutines.movehome());
     NamedCommands.registerCommand("Score Level 4", scoringroutines.scorelevel4());
 
-    configureBindings();
+    
     DriverStation.silenceJoystickConnectionWarning(true);
-    autoChooser = AutoBuilder.buildAutoChooser( "CenterScoreAuton");
+    autoChooser = AutoBuilder.buildAutoChooser( "CenterScoreAutonBlue");
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    configureBindings();
   }
 
   /**

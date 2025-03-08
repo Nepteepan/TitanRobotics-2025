@@ -30,6 +30,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -171,9 +172,20 @@ public class SwerveSubsystem extends SubsystemBase
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
+      
+
 
       LimelightHelpers.PoseEstimate cameraPose = 
         LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
+
+      if (DriverStation.getAlliance().equals(Alliance.Red)) {
+        cameraPose = LimelightHelpers.getBotPoseEstimate_wpiRed(Constants.Limelight1);
+      }
+        else {
+          cameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
+        }
+      
+
       if (cameraPose != null) {
       var distanceUsedForCalculatingStdDev = cameraPose.avgTagDist;  
       double xyStdDev = calculateXYStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
@@ -197,7 +209,17 @@ public class SwerveSubsystem extends SubsystemBase
 
       Boolean doRejectUpdate = false;
       LimelightHelpers.SetRobotOrientation("limelight", swerveDrive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+      
       LimelightHelpers.PoseEstimate limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
+
+      if (DriverStation.getAlliance().equals(Alliance.Red)) {
+        limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiRed(Constants.Limelight1);
+      }
+        else {
+          limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
+        }
+      
+     
       
       if(Math.abs(pigeon2.getAngularVelocityXDevice().getValueAsDouble()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
       {
@@ -265,9 +287,9 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0),
+              new PIDConstants(4.0, 0.0, 0.0),
               // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0)
+              new PIDConstants(4.0, 0.0, 0.0)
               // Rotation PID constants
           ),
           config,
