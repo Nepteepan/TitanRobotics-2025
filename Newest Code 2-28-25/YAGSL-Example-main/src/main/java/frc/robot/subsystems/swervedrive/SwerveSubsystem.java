@@ -6,6 +6,7 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -30,6 +31,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -65,11 +68,15 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Enable vision odometry updates while driving.
    */
-  private final boolean             visionDriveTest     = false;
+  private final boolean             visionDriveTest     = true;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
   private Vision vision;
+
+  private Pigeon2 pigeon2 = new Pigeon2(50);
+
+  private Field2d field2d = new Field2d();
 
   private LimelightHelpers limelightHelpers = new LimelightHelpers();
 
@@ -106,7 +113,7 @@ public class SwerveSubsystem extends SubsystemBase
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     if (visionDriveTest)
     {
-      setupPhotonVision();
+      //setupPhotonVision();
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
@@ -133,8 +140,30 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void setupPhotonVision()
   {
-    vision = new Vision(swerveDrive::getPose, swerveDrive.field);
+    //vision = new Vision(swerveDrive::getPose, swerveDrive.field);
   }
+
+      /**
+     * Calculate the standard deviation of the x and y coordinates.
+     *
+     * @param poseEstimates The pose estimate
+     * @param tagPosesSize The number of detected tag poses
+     * @return The standard deviation of the x and y coordinates
+     */
+    private double calculateXYStdDev(Double avgTagDistance, int tagPosesSize) {
+      return Constants.xyStdDevCoefficient * Math.pow(avgTagDistance, 2.0) / tagPosesSize;
+  }
+  /**
+   * Calculate the standard deviation of the theta coordinate.
+   *
+   * @param poseEstimates The pose estimate
+   * @param tagPosesSize The number of detected tag poses
+   * @return The standard deviation of the theta coordinate
+   */
+  private double calculateThetaStdDev(Double avgTagDistance, int tagPosesSize) {
+      return Constants.thetaStdDevCoefficient * Math.pow(avgTagDistance, 2.0) / tagPosesSize;
+  }
+
 
   @Override
   public void periodic()
@@ -142,12 +171,55 @@ public class SwerveSubsystem extends SubsystemBase
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
-      swerveDrive.updateOdometry();
+
+      LimelightHelpers.PoseEstimate cameraPose = 
+        LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
+      if (cameraPose != null) {
+      var distanceUsedForCalculatingStdDev = cameraPose.avgTagDist;  
+      double xyStdDev = calculateXYStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
+      double thetaStdDev =
+                    calculateThetaStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
+
+    
       //vision.updatePoseEstimation(swerveDrive);
-      LimelightHelpers.PoseEstimate limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiBlue("");
+      
+      //if (limelightHelpers.validPoseEstimate(limelightHelpers.getBotPoseEstimate_wpiBlue(""))) {
+        //swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds, VecBuilder.fill(.7,.7,9999999));
+      
+      //}
       //Try one of these below
-      swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds, VecBuilder.fill(.7,.7,9999999));
+
+      SmartDashboard.putNumber("XYSTD DEV", xyStdDev);
+
+      //swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds, VecBuilder.fill(xyStdDev, xyStdDev, 100));
       //swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
+      
+
+      Boolean doRejectUpdate = false;
+      LimelightHelpers.SetRobotOrientation("limelight", swerveDrive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+      LimelightHelpers.PoseEstimate limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
+      
+      if(Math.abs(pigeon2.getAngularVelocityXDevice().getValueAsDouble()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+      {
+        doRejectUpdate = true;
+      }
+      if(!doRejectUpdate)
+      {
+
+
+        if (limelightMeasurement != null && limelightMeasurement.tagCount >0 ) {
+          limelightHelpers.SetRobotOrientation(Constants.Limelight1, swerveDrive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+
+        swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds, VecBuilder.fill(xyStdDev, xyStdDev, 10));
+        }
+      }
+    }
+
+      swerveDrive.updateOdometry();
+
+      field2d.setRobotPose(swerveDrive.getPose());
+
+      SmartDashboard.putData("Robot Pose", field2d);
     }
   }
 

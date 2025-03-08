@@ -100,18 +100,23 @@ public class RobotContainer
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
+  
   public RobotContainer()
   {
     // Configure the trigger bindings
-    configureBindings();
-    DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(null);
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    
+    //NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    
     //Register Commands for Path Planner
     NamedCommands.registerCommand("Move Level 4", scoringroutines.movelevel4());
     NamedCommands.registerCommand("Move Level Load Postion", scoringroutines.moveloadposition());
     NamedCommands.registerCommand("Move Home Postion", scoringroutines.movehome());
+    NamedCommands.registerCommand("Score Level 4", scoringroutines.scorelevel4());
+
+    configureBindings();
+    DriverStation.silenceJoystickConnectionWarning(true);
+    autoChooser = AutoBuilder.buildAutoChooser( "CenterScoreAuton");
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
