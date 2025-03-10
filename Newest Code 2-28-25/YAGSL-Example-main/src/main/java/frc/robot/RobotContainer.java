@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.subsystems.NeoPositionalPid;
 import frc.robot.subsystems.scoringRoutines;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
@@ -46,6 +47,7 @@ public class RobotContainer
   private NeoPositionalPid SimpleArm = new NeoPositionalPid();
   private scoringRoutines scoringroutines = new scoringRoutines(elevator, SimpleArm, drivebase, lifter);
 
+  private AlignToReefTagRelative alignToReefTagRelative;
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -170,6 +172,11 @@ public class RobotContainer
           drivebase.driveToPose(
               new Pose2d(new Translation2d(-4, 4), Rotation2d.fromDegrees(0)))
                               ); 
+
+      //Align bot to reef for scoring.
+      driverXbox.leftTrigger().whileTrue(alignToReefTagRelative = new AlignToReefTagRelative(false, drivebase));
+      driverXbox.rightTrigger().whileTrue(alignToReefTagRelative = new AlignToReefTagRelative(true, drivebase));
+      
       //driverXbox.start().whileTrue(
         //new ConditionalCommand(new InstantCommand(()->{drivebase.resetOdometry( new Pose2d(0,0,Rotation2d.fromDegrees(0)));})
         //,new InstantCommand(()->{drivebase.resetOdometry( new Pose2d(0,0,Rotation2d.fromDegrees(180)));}),()->DriverStation.getAlliance().equals(Alliance.Blue)));
