@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import javax.swing.text.Position;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -12,17 +13,17 @@ import frc.robot.RobotMath.Elevator;
 import frc.robot.commands.MoveElevator;
 import frc.robot.Arm.ArmSubsystem.ArmSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
-import frc.robot.subsystems.Lifter.LifterSubsystem;
+import frc.robot.subsystems.Lifter.AlgaeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class scoringRoutines {
-    private LifterSubsystem lifter;
+    private AlgaeSubsystem lifter;
     private NeoPositionalPid arm;
     private ElevatorSubsystem elevator;
     private SwerveSubsystem swervesubsystem;
     private double Position2elevator = 0;
     private double Position3elevator = .75;
-    private double Position4elevator = 2.3;
+    private double Position4elevator = 2.2;//was 2.3
     private double elevatorloadposition = .35;
     private double elevatorhome = 0;
     private double Position1arm = 19;
@@ -35,7 +36,7 @@ public class scoringRoutines {
 
 
 
-    public scoringRoutines(ElevatorSubsystem elevator, NeoPositionalPid arm, SwerveSubsystem swervesubsystem, LifterSubsystem lifter){
+    public scoringRoutines(ElevatorSubsystem elevator, NeoPositionalPid arm, SwerveSubsystem swervesubsystem, AlgaeSubsystem lifter){
         this.elevator = elevator;
         this.arm = arm;
         this.swervesubsystem = swervesubsystem;
@@ -81,8 +82,9 @@ public class scoringRoutines {
     }
     //Sequence 3 Start
     public Command movelevel4() {
-        return Commands.sequence(elevator.setGoal(Position4elevator),//.withTimeout(.5),
-        arm.setGoal(Position3arm));
+        SmartDashboard.putNumber("Elevator Goal", Position4elevator);
+        return Commands.sequence(elevator.setGoal(Position3elevator),
+        arm.setGoal(Position3arm), elevator.setGoal(Position4elevator));
         
         
     }

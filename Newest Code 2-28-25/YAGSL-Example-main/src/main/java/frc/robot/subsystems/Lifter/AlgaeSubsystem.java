@@ -43,7 +43,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.LifterConstants;
 import frc.robot.RobotMath.Elevator;
 
-public class LifterSubsystem extends SubsystemBase
+public class AlgaeSubsystem extends SubsystemBase
 {
 
   public final Trigger atMin = new Trigger(() -> getLinearPosition().isNear(LifterConstants.kMinLifterHeight,
@@ -72,6 +72,7 @@ public class LifterSubsystem extends SubsystemBase
                                                                                new Constraints(LifterConstants.kMaxVelocity,
                                                                                LifterConstants.kMaxAcceleration));
 
+  
 
   // SysId Routine and seutp
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
@@ -109,7 +110,7 @@ public class LifterSubsystem extends SubsystemBase
   /**
    * Subsystem constructor.
    */
-  public LifterSubsystem()
+  public AlgaeSubsystem()
   {
     SmartDashboard.putNumber(className +" setPointGoal", 0);
     SparkMaxConfig config = new SparkMaxConfig();
@@ -183,6 +184,10 @@ public class LifterSubsystem extends SubsystemBase
     return Elevator.convertRotationsToDistance(Rotations.of(m_encoder.getVelocity())).per(Minute);
   }
 
+  public void RunMotor(double speed) {
+    m_motor.set(speed);
+  }
+  
   /**
    * Get the height of the Elevator
    *

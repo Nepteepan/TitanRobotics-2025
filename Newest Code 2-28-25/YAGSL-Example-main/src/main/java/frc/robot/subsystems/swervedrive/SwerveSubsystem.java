@@ -177,14 +177,14 @@ public class SwerveSubsystem extends SubsystemBase
 
       LimelightHelpers.PoseEstimate cameraPose = 
         LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
-
+/* 
       if (DriverStation.getAlliance().equals(Alliance.Red)) {
         cameraPose = LimelightHelpers.getBotPoseEstimate_wpiRed(Constants.Limelight1);
       }
         else {
           cameraPose = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
         }
-      
+      */
 
       if (cameraPose != null) {
       var distanceUsedForCalculatingStdDev = cameraPose.avgTagDist;  
@@ -192,33 +192,22 @@ public class SwerveSubsystem extends SubsystemBase
       double thetaStdDev =
                     calculateThetaStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
 
-    
-      //vision.updatePoseEstimation(swerveDrive);
-      
-      //if (limelightHelpers.validPoseEstimate(limelightHelpers.getBotPoseEstimate_wpiBlue(""))) {
-        //swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds, VecBuilder.fill(.7,.7,9999999));
-      
-      //}
-      //Try one of these below
+  
 
       SmartDashboard.putNumber("XYSTD DEV", xyStdDev);
-
-      //swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds, VecBuilder.fill(xyStdDev, xyStdDev, 100));
-      //swerveDrive.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
-      
 
       Boolean doRejectUpdate = false;
       LimelightHelpers.SetRobotOrientation("limelight", swerveDrive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
       
       LimelightHelpers.PoseEstimate limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
-
+/*
       if (DriverStation.getAlliance().equals(Alliance.Red)) {
         limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiRed(Constants.Limelight1);
       }
         else {
           limelightMeasurement = limelightHelpers.getBotPoseEstimate_wpiBlue(Constants.Limelight1);
         }
-      
+      */
      
       
       if(Math.abs(pigeon2.getAngularVelocityXDevice().getValueAsDouble()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates

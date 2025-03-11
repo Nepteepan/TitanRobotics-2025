@@ -22,7 +22,7 @@ import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.subsystems.NeoPositionalPid;
 import frc.robot.subsystems.scoringRoutines;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
-import frc.robot.subsystems.Lifter.LifterSubsystem;
+import frc.robot.subsystems.Lifter.AlgaeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -36,7 +36,7 @@ public class RobotContainer
 {
   private final SendableChooser<Command> autoChooser;
   private final ElevatorSubsystem     elevator           = new ElevatorSubsystem();
-  private final LifterSubsystem lifter = new LifterSubsystem();
+  private final AlgaeSubsystem lifter = new AlgaeSubsystem();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   final         CommandXboxController controllerXbox = new CommandXboxController(1);
@@ -151,6 +151,9 @@ public class RobotContainer
     controllerXbox.a().onTrue(scoringroutines.moveloadposition());
     controllerXbox.leftTrigger().onTrue(scoringroutines.scorelevel2());
   
+    //controllerXbox.povDown().whileTrue(lifter.RunMotor(1)); //Relase Algae
+    //controllerXbox.povUp().whileTrue(lifter.RunMotor(-1)); //Algae Intake
+
 
     if (DriverStation.isTest())
     {
@@ -166,8 +169,7 @@ public class RobotContainer
     {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.rightBumper().onTrue(scoringroutines.hang());
-      driverXbox.leftBumper().onTrue(scoringroutines.hangprep());
+      
       driverXbox.b().whileTrue(
           drivebase.driveToPose(
               new Pose2d(new Translation2d(-4, 4), Rotation2d.fromDegrees(0)))

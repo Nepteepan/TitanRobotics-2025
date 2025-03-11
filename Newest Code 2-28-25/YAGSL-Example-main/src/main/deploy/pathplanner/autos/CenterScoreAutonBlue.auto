@@ -9,6 +9,36 @@
           "data": {
             "pathName": "CenterScorePathBlue"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Level 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterScorePathBlue-MoveForward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Level 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Level Load Postion"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Home Postion"
+          }
         }
       ]
     }

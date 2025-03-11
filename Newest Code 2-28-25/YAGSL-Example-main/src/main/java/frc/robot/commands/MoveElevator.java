@@ -28,7 +28,7 @@ public class MoveElevator extends Command {
     m_ElevatorSubsystem.reachGoal(wantedposition);
   }
 
-  public double movetolerance = .06;
+  public double movetolerance = .1;
   @Override
   public boolean isFinished() {
     return  m_ElevatorSubsystem.atHeight(wantedposition, movetolerance).getAsBoolean();
