@@ -3,7 +3,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.Lifter;
+package frc.robot.subsystems.Algae;
 
 
 import static edu.wpi.first.units.Units.Inches;
@@ -62,7 +62,8 @@ public class AlgaeSubsystem extends SubsystemBase
           LifterConstants.kLifterkG,
           LifterConstants.kLifterkV,
           LifterConstants.kLifterkA);
-  private final SparkMax        m_motor    = new SparkMax(58, MotorType.kBrushless);
+  private final SparkMax        m_motor    = new SparkMax(
+    58, MotorType.kBrushless);
   private final RelativeEncoder m_encoder  = m_motor.getEncoder();
 
 

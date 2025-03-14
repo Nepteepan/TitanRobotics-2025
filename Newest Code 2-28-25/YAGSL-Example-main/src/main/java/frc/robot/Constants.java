@@ -142,7 +142,7 @@ public final class Constants
 
     public static final double kElevatorKp = 12.5; //Good so far
     public static final double kElevatorKi = 0.005;
-    public static final double kElevatorKd = 0.1;
+    public static final double kElevatorKd = 0.15;
 
     public static final double kElevatorkS = 0.01964; // volts (V)
     public static final double kElevatorkV = 3.894; // volt per velocity (V/(m/s))
@@ -190,5 +190,15 @@ public final class Constants
     public static int    kLifterCurrentLimit = 40;
     public static double kMaxVelocity = .5;//Meters.of(4).per(Second).in(MetersPerSecond);
     public static double kMaxAcceleration = .5; //Meters.of(3.5).per(Second).per(Second).in(MetersPerSecondPerSecond);
+  }
+
+  public static class AlgaeConstants{
+    public static final int ALGAE_INTAKE_PORT = 59;
+    public static final double kS = 0;
+    public static final double kG = 0;
+    public static final double kV = 0;
+    public static final double ALGAE_HOLD_SPEED = 0; //0 percent
+    public static final double ALGAE_INTAKE_SPEED = 0.6; //60 percent
+    public static final double ALGAE_PLACE_SPEED = -0.6;
   }
 }

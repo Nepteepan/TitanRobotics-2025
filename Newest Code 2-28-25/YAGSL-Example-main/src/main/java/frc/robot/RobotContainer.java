@@ -15,14 +15,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.subsystems.NeoPositionalPid;
 import frc.robot.subsystems.scoringRoutines;
+import frc.robot.subsystems.Algae.AlgaeLoadUnload;
+import frc.robot.subsystems.Algae.AlgaeSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
-import frc.robot.subsystems.Lifter.AlgaeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -36,7 +38,8 @@ public class RobotContainer
 {
   private final SendableChooser<Command> autoChooser;
   private final ElevatorSubsystem     elevator           = new ElevatorSubsystem();
-  private final AlgaeSubsystem lifter = new AlgaeSubsystem();
+  private final AlgaeSubsystem algaeElevator = new AlgaeSubsystem();
+  private final AlgaeLoadUnload algaeLoadUnload = new AlgaeLoadUnload();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final         CommandXboxController driverXbox = new CommandXboxController(0);
   final         CommandXboxController controllerXbox = new CommandXboxController(1);
@@ -45,7 +48,7 @@ public class RobotContainer
                                                                                 "swerve/neo"));
   //private ArmSubsystem arm = new ArmSubsystem();
   private NeoPositionalPid SimpleArm = new NeoPositionalPid();
-  private scoringRoutines scoringroutines = new scoringRoutines(elevator, SimpleArm, drivebase, lifter);
+  private scoringRoutines scoringroutines = new scoringRoutines(elevator, SimpleArm, drivebase, algaeElevator, algaeLoadUnload);
 
   private AlignToReefTagRelative alignToReefTagRelative;
 
@@ -55,11 +58,11 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> driverXbox.getLeftY() * -1,
                                                                 () -> driverXbox.getLeftX() * -1)
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
+                                                            .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
-
+  
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
@@ -77,7 +80,7 @@ public class RobotContainer
                                                                         () -> -driverXbox.getLeftY(),
                                                                         () -> -driverXbox.getLeftX())
                                                                     .withControllerRotationAxis(() -> driverXbox.getRawAxis(
-                                                                        2))
+                                                                        2) )
                                                                     .deadband(OperatorConstants.DEADBAND)
                                                                     .scaleTranslation(0.8)
                                                                     .allianceRelativeControl(true);
@@ -151,9 +154,12 @@ public class RobotContainer
     controllerXbox.a().onTrue(scoringroutines.moveloadposition());
     controllerXbox.leftTrigger().onTrue(scoringroutines.scorelevel2());
   
-    //controllerXbox.povDown().whileTrue(lifter.RunMotor(1)); //Relase Algae
-    //controllerXbox.povUp().whileTrue(lifter.RunMotor(-1)); //Algae Intake
-
+    controllerXbox.povRight().whileTrue(scoringroutines.relaseAlgae()); //Relase Algae
+    controllerXbox.povLeft().whileTrue(scoringroutines.intakeAlgae()); //Algae Intake
+    controllerXbox.povRight().whileFalse(scoringroutines.holdAlgae()); //Relase Algae
+    controllerXbox.povLeft().whileFalse(scoringroutines.holdAlgae()); //Algae Intake
+    controllerXbox.povUp().onTrue(scoringroutines.RaiseAlgaeArm()); //Raise Algae Arm
+    controllerXbox.povDown().onTrue(scoringroutines.LowerAlgaeArm()); //Lower Algae Arm
 
     if (DriverStation.isTest())
     {
@@ -175,8 +181,13 @@ public class RobotContainer
               new Pose2d(new Translation2d(-4, 4), Rotation2d.fromDegrees(0)))
                               ); 
 
+
       //Align bot to reef for scoring.
-      driverXbox.leftTrigger().whileTrue(alignToReefTagRelative = new AlignToReefTagRelative(false, drivebase));
+      //driverXbox.leftTrigger().whileTrue();
+
+      //alignToReefTagRelative = new AlignToReefTagRelative(false, drivebase);
+      
+
       driverXbox.rightTrigger().whileTrue(alignToReefTagRelative = new AlignToReefTagRelative(true, drivebase));
       
       //driverXbox.start().whileTrue(

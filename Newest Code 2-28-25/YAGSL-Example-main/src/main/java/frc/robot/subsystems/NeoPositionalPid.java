@@ -95,7 +95,7 @@ public void PushConfigToController()
         .p(Proportional)
         .i(Integral)
         .d(Derivative)
-        .outputRange(-1, 1);
+        .outputRange(-.5, .5);
     }
 
     public void setSetpointToPosition(double ToPosition) {

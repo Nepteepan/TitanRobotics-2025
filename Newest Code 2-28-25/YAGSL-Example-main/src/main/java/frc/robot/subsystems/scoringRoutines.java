@@ -12,8 +12,9 @@ import frc.robot.RobotMath.Arm;
 import frc.robot.RobotMath.Elevator;
 import frc.robot.commands.MoveElevator;
 import frc.robot.Arm.ArmSubsystem.ArmSubsystem;
+import frc.robot.subsystems.Algae.AlgaeLoadUnload;
+import frc.robot.subsystems.Algae.AlgaeSubsystem;
 import frc.robot.subsystems.Elevator.ElevatorSubsystem;
-import frc.robot.subsystems.Lifter.AlgaeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class scoringRoutines {
@@ -21,9 +22,10 @@ public class scoringRoutines {
     private NeoPositionalPid arm;
     private ElevatorSubsystem elevator;
     private SwerveSubsystem swervesubsystem;
+    private AlgaeLoadUnload algaeLoadUnload;
     private double Position2elevator = 0;
     private double Position3elevator = .75;
-    private double Position4elevator = 2.2;//was 2.3
+    private double Position4elevator = 2.4;//was 2.3
     private double elevatorloadposition = .35;
     private double elevatorhome = 0;
     private double Position1arm = 19;
@@ -36,12 +38,37 @@ public class scoringRoutines {
 
 
 
-    public scoringRoutines(ElevatorSubsystem elevator, NeoPositionalPid arm, SwerveSubsystem swervesubsystem, AlgaeSubsystem lifter){
+    public scoringRoutines(ElevatorSubsystem elevator, NeoPositionalPid arm, SwerveSubsystem swervesubsystem, AlgaeSubsystem lifter, AlgaeLoadUnload algaeLoadUnload){
         this.elevator = elevator;
         this.arm = arm;
         this.swervesubsystem = swervesubsystem;
         this.lifter = lifter;
+        this.algaeLoadUnload = algaeLoadUnload;
+    }
 
+    public Command RaiseAlgaeArm() {
+        SmartDashboard.putNumber("Algae Goal", 0);
+        return Commands.sequence(lifter.setGoal(0));
+    }
+
+    public Command LowerAlgaeArm() {
+        SmartDashboard.putNumber("Algae Goal", 1);
+        return Commands.sequence(lifter.setGoal(.85));
+    }
+
+    public Command intakeAlgae() {
+        SmartDashboard.putNumber("Algae intake", 0);
+        return Commands.sequence(algaeLoadUnload.intakeAlgae(0));
+    }
+
+    public Command relaseAlgae() {
+        SmartDashboard.putNumber("Algae intake", 1);
+        return Commands.sequence(algaeLoadUnload.relaseAlgae(0));
+    }
+
+    public Command holdAlgae() {
+        SmartDashboard.putNumber("Algae intake", 1);
+        return Commands.sequence(algaeLoadUnload.holdAlgae(0));
     }
 
     // Sequence 1 Start
@@ -72,6 +99,7 @@ public class scoringRoutines {
         elevator.setGoal(elevatorhome));
         
     }
+
     //Sequence Home End
     //Sequence 2 Start
     public Command movelevel3() {
@@ -93,13 +121,15 @@ public class scoringRoutines {
     public Command moveloadposition() {
         return Commands.sequence(
             new MoveElevator(elevator, elevatorloadposition),
-            arm.setGoal(armhome+2),new WaitCommand(.5),
-        arm.setGoal(armhome));
+            arm.setGoal(armhome+2)//,new WaitCommand(.5),
+        //arm.setGoal(armhome)
+        );
     }
      //Sequence Load End
      public Command scorelevel4() {
-        return Commands.sequence(arm.setGoal(armhome).withTimeout(.5),
-        //swervesubsystem.driveToDistanceCommand(-.25, .25),
+        return Commands.sequence(arm.setGoal(Position3arm-5).withTimeout(.5),
+        //swervesubsystem.driveToDistanceCommand(.25, -.15),
+        arm.setGoal(armhome),
         elevator.setGoal(elevatorloadposition));
     }
 
